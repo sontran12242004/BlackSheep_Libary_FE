@@ -1,0 +1,54 @@
+import React from 'react';
+import AdminPanel from '../components/AdminPanel';
+import PdfReaderModal from '../components/PdfReaderModal';
+import VideoCourseModal from '../components/VideoCourseModal';
+import ChartLightboxModal from '../components/ChartLightboxModal';
+
+export default function AdminPage({ 
+  items = [], 
+  vipItems = [], 
+  onOpenUpload, 
+  onDeleteItem, 
+  onToggleVip,
+  selectedItem,
+  setSelectedItem
+}) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      
+      {/* Full Admin Control Panel */}
+      <AdminPanel 
+        items={items}
+        vipItems={vipItems}
+        onOpenUpload={onOpenUpload}
+        onDeleteItem={onDeleteItem}
+        onToggleVip={onToggleVip}
+      />
+
+      {/* Interactive PDF Reader Modal (if previewed by Admin) */}
+      {selectedItem?.type === 'pdf' && (
+        <PdfReaderModal 
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
+
+      {/* Video Course Modal */}
+      {selectedItem?.type === 'video' && (
+        <VideoCourseModal 
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
+
+      {/* Chart & Recap Image Lightbox Modal */}
+      {selectedItem?.type === 'image' && (
+        <ChartLightboxModal 
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
+
+    </div>
+  );
+}
