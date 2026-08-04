@@ -207,7 +207,7 @@ export default function UploadModal({ isOpen, onClose, onItemUploaded }) {
               />
 
               <div style={{ fontSize: '0.82rem', fontWeight: '800', color: '#10b981', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <span>🇻🇳</span> <span>Bản Tiếng Việt {mediaType === 'recap' && '(Chỉ Ảnh .PNG/.JPG)'}</span>
+                <span>Bản Tiếng Việt {mediaType === 'recap' && '(Chỉ Ảnh .PNG/.JPG)'}</span>
               </div>
 
               {selectedFile ? (
@@ -242,7 +242,7 @@ export default function UploadModal({ isOpen, onClose, onItemUploaded }) {
               />
 
               <div style={{ fontSize: '0.82rem', fontWeight: '800', color: '#38bdf8', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <span>🇬🇧</span> <span>Bản Tiếng Anh {mediaType === 'recap' && '(Chỉ Ảnh .PNG/.JPG)'}</span>
+                <span>Bản Tiếng Anh {mediaType === 'recap' && '(Chỉ Ảnh .PNG/.JPG)'}</span>
               </div>
 
               {selectedFileEn ? (
@@ -320,7 +320,7 @@ export default function UploadModal({ isOpen, onClose, onItemUploaded }) {
               >
                 <GraduationCap size={18} color="#10b981" style={{ marginBottom: '4px' }} />
                 <div style={{ fontSize: '0.78rem', fontWeight: '800' }}>Lớp Coach</div>
-                <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Học viên Coach</div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Đọc viên Coach</div>
               </button>
 
               {/* Option 4: Admin & Coach Only */}

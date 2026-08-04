@@ -6,7 +6,7 @@ import MediaGrid from '../components/MediaGrid';
 import PdfReaderModal from '../components/PdfReaderModal';
 import VideoCourseModal from '../components/VideoCourseModal';
 import ChartLightboxModal from '../components/ChartLightboxModal';
-import { Crown, BookOpen, Camera, Sparkles, Layers } from 'lucide-react';
+
 
 export default function VipPage({ 
   vipItems, 
@@ -68,8 +68,7 @@ export default function VipPage({
               fontWeight: activeCategoryTab === 'all' ? '800' : '500'
             }}
           >
-            <Crown size={16} />
-            <span>Tất Cả Tài Nguyên VIP ({vipItems.length})</span>
+            <span>Tất Cả Tài Nguyên</span>
           </button>
 
           <button
@@ -77,8 +76,7 @@ export default function VipPage({
             className={`btn ${activeCategoryTab === 'pdf' ? 'btn-primary' : 'btn-secondary'}`}
             style={{ borderRadius: 'var(--radius-full)', padding: '9px 18px', fontSize: '0.85rem' }}
           >
-            <BookOpen size={16} />
-            <span>📘 Sách & Báo Cáo VIP ({pdfVipCount})</span>
+            <span>Sách & Báo Cáo</span>
           </button>
 
           <button
@@ -92,8 +90,7 @@ export default function VipPage({
               borderColor: activeCategoryTab === 'recap' ? '#a855f7' : undefined
             }}
           >
-            <Camera size={16} />
-            <span>📸 Trading Recap VIP (Biểu Đồ Ảnh) ({recapVipCount})</span>
+            <span>Trading Recap</span>
           </button>
         </div>
 

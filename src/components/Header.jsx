@@ -1,6 +1,7 @@
 import React from 'react';
-import { Search, ShieldCheck, Star, LogOut, Crown, GraduationCap, Award, BookOpen } from 'lucide-react';
+import { Search, ShieldCheck, Star, LogOut, Crown, GraduationCap } from 'lucide-react';
 import SheepHeadIcon from './SheepHeadIcon';
+import AvatarWithFrame from './AvatarWithFrame';
 
 export default function Header({ 
   searchQuery, 
@@ -8,6 +9,18 @@ export default function Header({
   onLogout,
   currentRole = 'member'
 }) {
+  const [avatar, setAvatar] = React.useState(localStorage.getItem('bsv_user_avatar') || '/logo.jpg');
+  const [selectedFrame, setSelectedFrame] = React.useState(localStorage.getItem('bsv_user_frame') || 'none');
+
+  React.useEffect(() => {
+    const syncAvatar = () => {
+      setAvatar(localStorage.getItem('bsv_user_avatar') || '/logo.jpg');
+      setSelectedFrame(localStorage.getItem('bsv_user_frame') || 'none');
+    };
+    window.addEventListener('avatar_updated', syncAvatar);
+    return () => window.removeEventListener('avatar_updated', syncAvatar);
+  }, []);
+
   const handleLogoutClick = () => {
     if (onLogout) {
       onLogout();
@@ -59,12 +72,79 @@ export default function Header({
     return 'Member';
   };
 
+  const getFrameTheme = (frameId, roleColor) => {
+    switch (frameId) {
+      case 'golden_bull':
+        return {
+          color: '#f59e0b',
+          border: '1.5px solid #f59e0b',
+          glow: '0 0 20px rgba(245, 158, 11, 0.75)',
+          bg: 'rgba(245, 158, 11, 0.12)',
+          particleColor: '#fef08a'
+        };
+      case 'emerald_profit':
+        return {
+          color: '#10b981',
+          border: '1.5px solid #10b981',
+          glow: '0 0 20px rgba(16, 185, 129, 0.75)',
+          bg: 'rgba(16, 185, 129, 0.12)',
+          particleColor: '#34d399'
+        };
+      case 'cyber_candlestick':
+        return {
+          color: '#38bdf8',
+          border: '1.5px solid #38bdf8',
+          glow: '0 0 20px rgba(56, 189, 248, 0.75)',
+          bg: 'rgba(56, 189, 248, 0.12)',
+          particleColor: '#818cf8'
+        };
+      case 'diamond_trader':
+        return {
+          color: '#e879f9',
+          border: '1.5px solid #e879f9',
+          glow: '0 0 20px rgba(232, 121, 249, 0.75)',
+          bg: 'rgba(232, 121, 249, 0.12)',
+          particleColor: '#f472b6'
+        };
+      case 'bull_flame':
+        return {
+          color: '#ef4444',
+          border: '1.5px solid #ef4444',
+          glow: '0 0 22px rgba(239, 68, 68, 0.75)',
+          bg: 'rgba(239, 68, 68, 0.12)',
+          particleColor: '#f97316'
+        };
+      case 'blazing_inferno':
+        return {
+          color: '#f97316',
+          border: '1.5px solid #f97316',
+          glow: '0 0 28px rgba(249, 115, 22, 0.9), 0 0 45px rgba(239, 68, 68, 0.65)',
+          bg: 'rgba(249, 115, 22, 0.16)',
+          particleColor: '#fef08a'
+        };
+      default:
+        return {
+          color: roleColor,
+          border: `1px solid ${roleColor}`,
+          glow: '0 2px 10px rgba(0,0,0,0.2)',
+          bg: 'rgba(255, 255, 255, 0.06)',
+          particleColor: null
+        };
+    }
+  };
+
+  const frameTheme = getFrameTheme(selectedFrame, getRoleColor());
+
   return (
     <header className="glass-panel" style={{ borderRadius: '0 0 24px 24px', borderTop: 'none', position: 'sticky', top: 0, zIndex: 50, padding: '16px 28px', marginBottom: '28px', background: 'rgba(14, 14, 18, 0.88)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         
         {/* Brand Logo & Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div 
+          onClick={() => navigateTo('/member')}
+          title="Trở về Trang Chủ Kho Sách"
+          style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
+        >
           
           {/* Logo Frame - Brand Only */}
           <div
@@ -99,12 +179,9 @@ export default function Header({
               <h1 className="sparkle-text" style={{ fontSize: '1.5rem', fontWeight: '900', textTransform: 'uppercase' }}>
                 Black Sheep Library
               </h1>
-              <span className="sparkle-icon" style={{ display: 'inline-flex', color: getRoleColor() }}>
-                <SheepHeadIcon size={18} />
-              </span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Star size={12} color="#FFFFFF" fill="#FFFFFF" /> Nền tảng học tập & nghiên cứu tài chính • Không kêu gọi đầu tư
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              Nền tảng học tập & nghiên cứu tài chính • Không kêu gọi đầu tư
             </p>
           </div>
 
@@ -146,58 +223,39 @@ export default function Header({
         {/* User Profile & Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
 
-          {/* User Profile Badge - Clickable to Settings */}
+          {/* User Profile Pill Container with Animated Glow Border & Floating Sparkle Particles */}
           <div
+            className={`profile-pill-container ${selectedFrame !== 'none' ? `pill-frame-${selectedFrame.replace('_', '-')}` : ''}`}
             onClick={() => navigateTo('/settings')}
             title="Cài Đặt & Hồ Sơ"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '4px 14px 4px 6px',
-              background: 'rgba(255, 255, 255, 0.06)',
-              borderRadius: 'var(--radius-full)',
-              border: `1px solid ${getRoleColor()}`,
-              boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-              cursor: 'pointer',
-              transition: 'background 0.2s ease, box-shadow 0.2s ease'
+              background: frameTheme.bg,
+              border: frameTheme.border,
+              boxShadow: frameTheme.glow,
             }}
-            onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = `0 4px 20px ${getRoleColor()}33`; }}
-            onMouseOut={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)'; }}
           >
-            <div style={{ position: 'relative', width: '32px', height: '32px' }}>
-              <img 
-                src="/logo.jpg" 
-                alt="User Avatar"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: `1.5px solid ${getRoleColor()}`
-                }}
-              />
-              <span style={{
-                position: 'absolute',
-                bottom: '0',
-                right: '0',
-                width: '8px',
-                height: '8px',
-                backgroundColor: getRoleColor(),
-                borderRadius: '50%',
-                border: '1.5px solid #0e0e12',
-                boxShadow: `0 0 6px ${getRoleColor()}`
-              }} />
-            </div>
+            {/* Floating Sparkle Particles matching frame color */}
+            {frameTheme.particleColor && (
+              <>
+                <span className="sparkle-particle sparkle-particle-1" style={{ backgroundColor: frameTheme.particleColor, color: frameTheme.particleColor }} />
+                <span className="sparkle-particle sparkle-particle-2" style={{ backgroundColor: frameTheme.particleColor, color: frameTheme.particleColor }} />
+                <span className="sparkle-particle sparkle-particle-3" style={{ backgroundColor: frameTheme.particleColor, color: frameTheme.particleColor }} />
+                <span className="sparkle-particle sparkle-particle-4" style={{ backgroundColor: frameTheme.particleColor, color: frameTheme.particleColor }} />
+              </>
+            )}
+
+            <AvatarWithFrame 
+              avatarUrl={avatar}
+              frameId={selectedFrame}
+              size={36}
+              roleColor={getRoleColor()}
+            />
 
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#FFFFFF' }}>
                 {getRoleTitle()} 
-                {currentRole === 'admin' && <ShieldCheck size={13} color="#38bdf8" />}
-                {currentRole === 'vip' && <Crown size={13} color="#f59e0b" />}
-                {currentRole === 'coach' && <GraduationCap size={13} color="#10b981" />}
               </span>
-              <span style={{ fontSize: '0.68rem', color: getRoleColor(), fontWeight: currentRole !== 'member' ? '700' : '400' }}>
+              <span style={{ fontSize: '0.68rem', color: frameTheme.color, fontWeight: '700' }}>
                 {getRoleSubtitle()}
               </span>
             </div>

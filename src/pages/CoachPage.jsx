@@ -18,7 +18,10 @@ export default function CoachPage({
   setSearchQuery,
   activeMarket,
   setActiveMarket,
-  onOpenUpload 
+  onOpenUpload,
+  onDeleteItem,
+  onUpdateItem,
+  onToggleHide
 }) {
   const [activeTab, setActiveTab] = useState('analytics'); // 'analytics' | 'grid'
 
@@ -57,7 +60,7 @@ export default function CoachPage({
             }}
           >
             <Eye size={16} />
-            <span>Thống Kê Mắt Xem & Tiến Độ Học Viên</span>
+            <span>Thống Kê Mắt Xem & Tiến Độ Đọc Viên</span>
           </button>
 
           <button 
@@ -96,7 +99,12 @@ export default function CoachPage({
 
       {/* 1. ANALYTICS & STUDENT PROGRESS TRACKER VIEW */}
       {activeTab === 'analytics' && (
-        <CoachTrackerPanel coachItems={coachItems} />
+        <CoachTrackerPanel 
+          coachItems={coachItems} 
+          onDeleteItem={onDeleteItem}
+          onUpdateItem={onUpdateItem}
+          onToggleHide={onToggleHide}
+        />
       )}
 
       {/* 2. PUBLIC GRID VIEW */}

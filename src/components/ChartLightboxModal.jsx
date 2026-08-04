@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Download, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon, User, Calendar, Tag } from 'lucide-react';
+import { X, Lock, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon, User, Calendar, Tag } from 'lucide-react';
 
 export default function ChartLightboxModal({ item, onClose }) {
   const [zoom, setZoom] = useState(100);
@@ -54,12 +54,6 @@ export default function ChartLightboxModal({ item, onClose }) {
             <button className="btn btn-secondary" style={{ padding: '6px 12px' }} onClick={() => setRotation(r => (r + 90) % 360)}>
               <RotateCw size={16} />
             </button>
-
-            {item.fileUrl && (
-              <a href={item.fileUrl} download={item.title} className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '0.82rem', marginLeft: '10px' }}>
-                <Download size={15} /> Tải Ảnh Biểu Đồ
-              </a>
-            )}
 
             <button onClick={onClose} className="btn btn-ghost" style={{ padding: '8px', marginLeft: '6px' }}>
               <X size={20} />

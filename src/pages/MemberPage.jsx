@@ -17,10 +17,11 @@ export default function MemberPage({
   setActiveMarket,
   onLogout 
 }) {
-  const filteredItems = items.filter(item => {
-    if (activeMarket !== 'ALL' && item.market !== activeMarket) return false;
+  const filteredItems = (items || []).filter(item => {
+    if (!item) return false;
+    if (activeMarket && activeMarket !== 'ALL' && item.market !== activeMarket) return false;
 
-    if (searchQuery.trim()) {
+    if (searchQuery && searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = item.title?.toLowerCase().includes(q);
       const matchAuthor = item.author?.toLowerCase().includes(q);

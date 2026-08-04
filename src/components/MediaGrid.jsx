@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  BookOpen, Image as ImageIcon, Video, Play, Download, Trash2, Eye, 
+  BookOpen, Image as ImageIcon, Video, Play, Trash2, Eye, 
   Calendar, User, Lock, Unlock, Crown, GraduationCap, X, Sparkles, ShieldCheck 
 } from 'lucide-react';
 
@@ -113,7 +113,6 @@ export default function MediaGrid({
                   gap: '8px',
                   boxShadow: '0 0 25px rgba(0, 0, 0, 0.9)'
                 }}>
-                  <Lock size={16} color="#f59e0b" />
                   <span style={{ fontSize: '0.78rem', fontWeight: '800', color: '#f59e0b' }}>
                     KHÓA VIP ONLY
                   </span>
@@ -131,8 +130,8 @@ export default function MediaGrid({
 
                 {/* VIP Badge */}
                 {isVip && (
-                  <span style={{ background: '#f59e0b', color: '#000000', fontWeight: '900', fontSize: '0.72rem', padding: '2px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Crown size={12} fill="#000" /> VIP ONLY
+                  <span style={{ background: '#f59e0b', color: '#000000', fontWeight: '900', fontSize: '0.72rem', padding: '2px 8px', borderRadius: '12px' }}>
+                    VIP ONLY
                   </span>
                 )}
 
@@ -161,8 +160,12 @@ export default function MediaGrid({
                     fontWeight: '700', 
                     color: 'var(--text-primary)', 
                     marginBottom: '8px', 
+                    cursor: 'pointer',
                     lineHeight: 1.4,
-                    cursor: 'pointer'
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
                   }}
                 >
                   {item.title}
@@ -177,7 +180,16 @@ export default function MediaGrid({
                   </span>
                 </div>
 
-                <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5 }}>
+                <p style={{ 
+                  fontSize: '0.82rem', 
+                  color: 'var(--text-secondary)', 
+                  lineHeight: 1.5, 
+                  marginBottom: '16px',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
                   {item.description}
                 </p>
 
@@ -194,7 +206,7 @@ export default function MediaGrid({
               </div>
 
               {/* Action Buttons Footer */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pt: '12px', borderTop: '1px solid var(--border-color)', marginTop: '8px', paddingTop: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 
                 {isLocked ? (
                   <button 
@@ -202,8 +214,7 @@ export default function MediaGrid({
                     onClick={() => handleCardClick(item)}
                     style={{ flex: 1, padding: '8px 14px', fontSize: '0.82rem', borderColor: '#f59e0b', color: '#f59e0b' }}
                   >
-                    <Lock size={15} />
-                    <span>🔒 Khóa VIP Only</span>
+                    <span>Khóa VIP Only</span>
                   </button>
                 ) : (
                   <button 
@@ -218,20 +229,8 @@ export default function MediaGrid({
                   </button>
                 )}
 
-                {/* Optional Download & Delete buttons */}
+                {/* Optional Delete button for user uploads */}
                 <div style={{ display: 'flex', gap: '6px', marginLeft: '8px' }}>
-                  {!isLocked && item.fileUrl && (
-                    <a
-                      href={item.fileUrl}
-                      download={item.title}
-                      className="btn btn-secondary"
-                      style={{ padding: '8px', borderRadius: 'var(--radius-sm)' }}
-                      title="Tải xuống tệp"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Download size={15} />
-                    </a>
-                  )}
                   {item.isUserUploaded && (
                     <button
                       className="btn btn-secondary"
@@ -271,9 +270,10 @@ export default function MediaGrid({
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 16px',
-              color: lockedItemModal.isVip ? '#f59e0b' : '#10b981'
+              color: lockedItemModal.isVip ? '#f59e0b' : '#10b981',
+              fontWeight: '800'
             }}>
-              <Lock size={30} />
+              VIP
             </div>
 
             <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#FFFFFF', marginBottom: '8px' }}>
@@ -282,7 +282,7 @@ export default function MediaGrid({
 
             <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
               Tài liệu <strong>"{lockedItemModal.title}"</strong> thuộc danh mục độc quyền dành riêng cho 
-              <strong> {lockedItemModal.isVip ? 'Member VIP' : 'Học Viên Lớp Coach'}</strong>.
+              <strong> {lockedItemModal.isVip ? 'Member VIP' : 'Đọc Viên Lớp Coach'}</strong>.
             </p>
 
             <div style={{ background: 'rgba(255,255,255,0.04)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '24px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>

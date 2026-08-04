@@ -52,7 +52,7 @@ export default function CoachHeaderBanner({ coachCount }) {
             </div>
             
             <p style={{ fontSize: '0.85rem', color: '#e4e4e7', marginTop: '6px', maxWidth: '680px', lineHeight: 1.5 }}>
-              Trang dành riêng cho Huấn Luyện Viên & Mentor Trading. Cung cấp giáo trình đào tạo 1-on-1, bộ bài tập thực hành sửa lệnh và checklist quản lý rủi ro học viên.
+              Trang dành riêng cho Huấn Luyện Viên & Mentor Trading. Cung cấp giáo trình đào tạo 1-on-1, bộ bài tập thực hành sửa lệnh và checklist quản lý rủi ro đọc viên.
             </p>
           </div>
         </div>

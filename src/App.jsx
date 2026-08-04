@@ -5,6 +5,7 @@ import VipPage from './pages/VipPage';
 import CoachPage from './pages/CoachPage';
 import AdminPage from './pages/AdminPage';
 import SettingsProfilePage from './pages/SettingsProfilePage';
+import LandingPage from './pages/LandingPage';
 import UploadModal from './components/UploadModal';
 import { getAllMediaItems, deleteMediaItem } from './services/storageService';
 import { SAMPLE_VIP_MEDIA, SAMPLE_COACH_MEDIA } from './data/sampleFinanceData';
@@ -21,7 +22,8 @@ export default function App() {
     if (p === '/vip' || p.includes('vip')) return '/vip';
     if (p === '/admin' || p.includes('admin')) return '/admin';
     if (p === '/settings' || p.includes('settings')) return '/settings';
-    return '/member';
+    if (p === '/member') return '/member';
+    return '/';
   });
 
   const currentRole = currentPath === '/vip' ? 'vip' : currentPath === '/coach' ? 'coach' : currentPath === '/admin' ? 'admin' : 'member';
@@ -42,7 +44,8 @@ export default function App() {
       else if (p === '/vip' || p.includes('vip')) setCurrentPath('/vip');
       else if (p === '/admin' || p.includes('admin')) setCurrentPath('/admin');
       else if (p === '/settings' || p.includes('settings')) setCurrentPath('/settings');
-      else setCurrentPath('/member');
+      else if (p === '/member') setCurrentPath('/member');
+      else setCurrentPath('/');
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -79,6 +82,16 @@ export default function App() {
     setVipItems(prev => prev.filter(i => i.id !== id));
   };
 
+  const handleUpdateItem = (updatedItem) => {
+    setItems(prev => prev.map(i => i.id === updatedItem.id ? { ...i, ...updatedItem } : i));
+    setVipItems(prev => prev.map(i => i.id === updatedItem.id ? { ...i, ...updatedItem } : i));
+  };
+
+  const handleToggleHide = (id) => {
+    setItems(prev => prev.map(i => i.id === id ? { ...i, isHidden: !i.isHidden } : i));
+    setVipItems(prev => prev.map(i => i.id === id ? { ...i, isHidden: !i.isHidden } : i));
+  };
+
   const handleToggleVip = (id) => {
     const isVipNow = vipItems.some(i => i.id === id);
     if (isVipNow) {
@@ -98,6 +111,17 @@ export default function App() {
 
   // All items combined for display
   const allItems = [...items, ...vipItems];
+
+  // Enter app from landing
+  const handleEnterApp = () => {
+    window.history.pushState({}, '', '/member');
+    setCurrentPath('/member');
+  };
+
+  // Show Landing Page at root
+  if (currentPath === '/') {
+    return <LandingPage onEnterApp={handleEnterApp} />;
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -162,6 +186,9 @@ export default function App() {
                 activeMarket={activeMarket}
                 setActiveMarket={setActiveMarket}
                 onOpenUpload={() => setIsUploadOpen(true)}
+                onDeleteItem={handleDeleteItem}
+                onUpdateItem={handleUpdateItem}
+                onToggleHide={handleToggleHide}
               />
             )}
 
