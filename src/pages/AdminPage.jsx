@@ -1,8 +1,8 @@
 import React from 'react';
-import AdminPanel from '../components/AdminPanel';
-import PdfReaderModal from '../components/PdfReaderModal';
-import VideoCourseModal from '../components/VideoCourseModal';
-import ChartLightboxModal from '../components/ChartLightboxModal';
+import AdminPanel from '../components/admin/AdminPanel';
+import PdfReaderModal from '../components/modals/PdfReaderModal';
+import VideoCourseModal from '../components/modals/VideoCourseModal';
+import ChartLightboxModal from '../components/modals/ChartLightboxModal';
 
 export default function AdminPage({ 
   items = [], 

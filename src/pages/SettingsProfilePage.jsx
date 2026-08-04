@@ -3,8 +3,8 @@ import {
   User, Mail, Shield, Crown, GraduationCap, ShieldCheck, Camera,
   Bell, Moon, Globe, Lock, ChevronRight, Check, Save, ArrowLeft, Sparkles
 } from 'lucide-react';
-import SheepHeadIcon from '../components/SheepHeadIcon';
-import AvatarWithFrame from '../components/AvatarWithFrame';
+import SheepHeadIcon from '../components/ui/SheepHeadIcon';
+import AvatarWithFrame from '../components/ui/AvatarWithFrame';
 
 const MOCK_PROFILE = {
   name: 'Black Sheep Member',

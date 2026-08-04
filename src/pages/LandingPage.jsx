@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import Interactive3DBook from '../components/Interactive3DBook';
-import PdfReaderModal from '../components/PdfReaderModal';
-import VideoCourseModal from '../components/VideoCourseModal';
-import ChartLightboxModal from '../components/ChartLightboxModal';
+import Interactive3DBook from '../components/ui/Interactive3DBook';
+import PdfReaderModal from '../components/modals/PdfReaderModal';
+import VideoCourseModal from '../components/modals/VideoCourseModal';
+import ChartLightboxModal from '../components/modals/ChartLightboxModal';
 import { INITIAL_SAMPLE_MEDIA, SAMPLE_VIP_MEDIA } from '../data/sampleFinanceData';
 
 /* =========================================================
@@ -406,22 +406,28 @@ function NavBar({ onEnterApp, onOpenAuth }) {
       transition: 'all 0.4s ease',
     }}>
       <div style={{
-        maxWidth: '1280px', margin: '0 auto',
+        width: '100%', padding: '0 3%',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         height: '72px',
       }}>
         {/* Logo */}
-        <div 
+        <div
           onClick={onEnterApp}
           style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
         >
           <div style={{
             width: '38px', height: '38px', borderRadius: '10px',
+            padding: '2px',
             background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 0 20px rgba(99,102,241,0.4)',
+            overflow: 'hidden'
           }}>
-            <span style={{ color: '#fff', fontWeight: '900', fontSize: '1.1rem' }}>B</span>
+            <img
+              src="/logo.jpg"
+              alt="Black Sheep Library Logo"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+            />
           </div>
           <span style={{
             fontFamily: 'Inter, sans-serif', fontWeight: '800', fontSize: '1.05rem',
@@ -429,31 +435,6 @@ function NavBar({ onEnterApp, onOpenAuth }) {
           }}>
             Black Sheep Library
           </span>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="desktop-nav-links" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-          {[
-            { label: 'Trang Chủ', target: 'hero' },
-            { label: 'Biểu Đồ XAUUSD', target: '3d-book' },
-            { label: 'Danh Mục', target: 'categories' },
-            { label: 'Cấu Trúc', target: 'roadmap' },
-            { label: 'Nổi Bật', target: 'featured' },
-          ].map(link => (
-            <button
-              key={link.label}
-              onClick={() => scrollTo(link.target)}
-              style={{
-                background: 'none', border: 'none', color: '#94a3b8',
-                fontSize: '0.88rem', fontWeight: '500', fontFamily: 'Inter, sans-serif',
-                cursor: 'pointer', transition: 'color 0.2s ease', padding: 0
-              }}
-              onMouseOver={e => e.target.style.color = '#38bdf8'}
-              onMouseOut={e => e.target.style.color = '#94a3b8'}
-            >
-              {link.label}
-            </button>
-          ))}
         </div>
 
         {/* CTA Buttons: Đăng nhập & Đăng ký */}
@@ -528,10 +509,10 @@ function HeroSection({ onEnterApp }) {
 
   return (
     <section id="hero" style={{
-      minHeight: '100vh',
+      minHeight: 'auto',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       position: 'relative', zIndex: 1,
-      padding: '120px 0 80px',
+      padding: '90px 0 30px',
       textAlign: 'center',
       overflow: 'hidden',
     }}>
@@ -577,12 +558,12 @@ function HeroSection({ onEnterApp }) {
       }} />
 
       {/* Content — centered text zone */}
-      <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%', padding: '0 5%' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '0 3%' }}>
         {/* Badge */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '8px',
           background: 'rgba(14,165,233,0.1)', border: '1px solid rgba(14,165,233,0.25)',
-          borderRadius: '100px', padding: '6px 18px', marginBottom: '40px',
+          borderRadius: '100px', padding: '6px 18px', marginBottom: '24px',
           animation: 'fadeSlideUp 0.8s ease forwards', opacity: 0,
           animationDelay: '0.3s',
         }}>
@@ -594,10 +575,10 @@ function HeroSection({ onEnterApp }) {
 
         {/* Headline */}
         <h1 style={{
-          fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
+          fontSize: 'clamp(2.5rem, 6.5vw, 5rem)',
           fontWeight: '900', lineHeight: 1.08, letterSpacing: '-0.04em',
           fontFamily: 'Inter, sans-serif', color: '#fff',
-          marginBottom: '28px',
+          marginBottom: '20px',
           animation: 'fadeSlideUp 1s ease forwards', opacity: 0, animationDelay: '0.5s',
         }}>
           <GradientText gradient="linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 100%)">
@@ -608,8 +589,8 @@ function HeroSection({ onEnterApp }) {
 
         {/* Subtitle */}
         <p style={{
-          fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
-          color: '#64748b', lineHeight: 1.7, maxWidth: '680px', margin: '0 auto 52px',
+          fontSize: 'clamp(0.95rem, 2.2vw, 1.15rem)',
+          color: '#64748b', lineHeight: 1.6, maxWidth: '680px', margin: '0 auto 32px',
           fontFamily: 'Inter, sans-serif', fontWeight: '400',
           animation: 'fadeSlideUp 1s ease forwards', opacity: 0, animationDelay: '0.8s',
         }}>
@@ -630,38 +611,14 @@ function HeroSection({ onEnterApp }) {
         </div>
       </div>
 
-      {/* XAUUSD Chart — full-bleed, outside 900px container */}
+      {/* XAUUSD Chart — full-bleed */}
       <div id="3d-book" style={{
         width: '100%',
-        marginTop: '48px',
+        marginTop: '28px',
         animation: 'fadeSlideUp 1s ease forwards', opacity: 0, animationDelay: '1.2s',
         position: 'relative', zIndex: 2,
       }}>
         <Interactive3DBook onEnterApp={onEnterApp} />
-      </div>
-
-
-
-      {/* Scroll indicator */}
-      <div style={{
-        position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-        animation: 'fadeSlideUp 1s ease forwards 1.8s, scrollBounce 2s ease-in-out infinite 2s',
-        opacity: 0,
-      }}>
-        <span style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'Inter, sans-serif', letterSpacing: '0.1em' }}>
-          SCROLL
-        </span>
-        <div style={{
-          width: '20px', height: '32px', borderRadius: '10px',
-          border: '1.5px solid rgba(255,255,255,0.2)',
-          display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '4px',
-        }}>
-          <div style={{
-            width: '3px', height: '8px', borderRadius: '2px',
-            background: '#0ea5e9', animation: 'scrollDot 1.5s ease-in-out infinite'
-          }} />
-        </div>
       </div>
     </section>
   );
@@ -670,15 +627,15 @@ function HeroSection({ onEnterApp }) {
 // ─── STATS SECTION ─────────────────────────────────────────────────────────
 function StatsSection() {
   return (
-    <section style={{ padding: '100px 5%', position: 'relative', zIndex: 1 }}>
+    <section style={{ padding: '36px 3%', position: 'relative', zIndex: 1 }}>
       <div style={{
-        maxWidth: '1000px', margin: '0 auto',
+        width: '100%',
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: '32px', padding: '60px 5%',
+        borderRadius: '28px', padding: '32px 3%',
         backdropFilter: 'blur(24px)',
         display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '40px',
+        gap: '28px',
       }}>
         <StatCounter value="2400" suffix="+" label="Độc Giả & Trader" color="#0ea5e9" />
         <StatCounter value="180" suffix="+" label="Tài Liệu Chuyên Sâu" color="#6366f1" />
@@ -701,40 +658,37 @@ const CATEGORIES = [
 
 function CategoriesSection() {
   return (
-    <section id="categories" style={{ padding: '100px 5%', position: 'relative', zIndex: 1 }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-        <AnimSection style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <p style={{ color: '#6366f1', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}>
+    <section id="categories" style={{ padding: '40px 3%', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%' }}>
+        <AnimSection style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <p style={{ color: '#6366f1', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '10px' }}>
             DANH MỤC KIẾN THỨC
           </p>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1.1 }}>
-            Toàn Bộ Kiến Thức Bạn Cần<br />
-            <GradientText gradient="linear-gradient(135deg, #6366f1, #0ea5e9, #10b981)">
-              Để Làm Chủ Thị Trường
-            </GradientText>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1.1 }}>
+            Toàn Bộ Kiến Thức Bạn Cần <GradientText gradient="linear-gradient(135deg, #6366f1, #0ea5e9, #10b981)">Để Làm Chủ Thị Trường</GradientText>
           </h2>
         </AnimSection>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
           {CATEGORIES.map((cat, i) => (
             <AnimSection key={cat.title} delay={i * 0.08}>
-              <GlassCard glowColor={cat.glow} style={{ padding: '32px', height: '100%' }}>
+              <GlassCard glowColor={cat.glow} style={{ padding: '24px', height: '100%' }}>
                 <div style={{
-                  width: '52px', height: '52px', borderRadius: '16px',
+                  width: '44px', height: '44px', borderRadius: '14px',
                   background: `${cat.color}18`, border: `1px solid ${cat.color}44`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.5rem', marginBottom: '20px',
+                  fontSize: '1.3rem', marginBottom: '14px',
                 }}>
                   {cat.icon}
                 </div>
-                <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '1.05rem', fontFamily: 'Inter, sans-serif', marginBottom: '10px' }}>
+                <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '1rem', fontFamily: 'Inter, sans-serif', marginBottom: '8px' }}>
                   {cat.title}
                 </h3>
-                <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: 1.65, fontFamily: 'Inter, sans-serif' }}>
+                <p style={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.55, fontFamily: 'Inter, sans-serif' }}>
                   {cat.desc}
                 </p>
-                <div 
-                  style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '6px', color: cat.color, fontSize: '0.82rem', fontWeight: '600', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
+                <div
+                  style={{ marginTop: '14px', display: 'flex', alignItems: 'center', gap: '6px', color: cat.color, fontSize: '0.8rem', fontWeight: '600', fontFamily: 'Inter, sans-serif', cursor: 'pointer' }}
                 >
                   Khám phá
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -760,13 +714,13 @@ const ROADMAP = [
 
 function RoadmapSection() {
   return (
-    <section id="roadmap" style={{ padding: '100px 5%', position: 'relative', zIndex: 1 }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <AnimSection style={{ textAlign: 'center', marginBottom: '72px' }}>
-          <p style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '16px' }}>
+    <section id="roadmap" style={{ padding: '40px 3%', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%' }}>
+        <AnimSection style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <p style={{ color: '#10b981', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '10px' }}>
             CẤU TRÚC THƯ VIỆN
           </p>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif' }}>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif' }}>
             Phân Loại Tài Liệu <GradientText gradient="linear-gradient(135deg, #10b981, #0ea5e9)">Theo Cấp Độ & Chuyên Đề</GradientText>
           </h2>
         </AnimSection>
@@ -774,30 +728,30 @@ function RoadmapSection() {
         <div style={{ position: 'relative' }}>
           {/* Connection line */}
           <div style={{
-            position: 'absolute', top: '40px', left: '10%', right: '10%', height: '1px',
+            position: 'absolute', top: '30px', left: '5%', right: '5%', height: '1px',
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
           }} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
             {ROADMAP.map((step, i) => (
               <AnimSection key={step.step} delay={i * 0.12}>
-                <div style={{ textAlign: 'center', padding: '40px 24px' }}>
+                <div style={{ textAlign: 'center', padding: '20px 16px' }}>
                   {/* Step circle */}
                   <div style={{
-                    width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 24px',
+                    width: '60px', height: '60px', borderRadius: '50%', margin: '0 auto 16px',
                     background: `linear-gradient(135deg, ${step.color}22, ${step.color}08)`,
                     border: `1.5px solid ${step.color}44`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 0 30px ${step.color}22`,
+                    boxShadow: `0 0 20px ${step.color}22`,
                   }}>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '900', fontSize: '1.1rem', color: step.color }}>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '900', fontSize: '1rem', color: step.color }}>
                       {step.step}
                     </span>
                   </div>
-                  <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '1.05rem', marginBottom: '12px', fontFamily: 'Inter, sans-serif' }}>
+                  <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '1rem', marginBottom: '8px', fontFamily: 'Inter, sans-serif' }}>
                     {step.title}
                   </h3>
-                  <p style={{ color: '#64748b', fontSize: '0.87rem', lineHeight: 1.6, fontFamily: 'Inter, sans-serif' }}>
+                  <p style={{ color: '#64748b', fontSize: '0.84rem', lineHeight: 1.5, fontFamily: 'Inter, sans-serif' }}>
                     {step.desc}
                   </p>
                 </div>
@@ -819,48 +773,48 @@ const ARTICLES = [
 
 function FeaturedSection({ onEnterApp }) {
   return (
-    <section id="featured" style={{ padding: '100px 5%', position: 'relative', zIndex: 1 }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <AnimSection style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px', flexWrap: 'wrap', gap: '20px' }}>
+    <section id="featured" style={{ padding: '40px 3%', position: 'relative', zIndex: 1 }}>
+      <div style={{ width: '100%' }}>
+        <AnimSection style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <p style={{ color: '#f59e0b', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '10px' }}>
+            <p style={{ color: '#f59e0b', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '8px' }}>
               TÀI LIỆU NỔI BẬT
             </p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif' }}>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif' }}>
               Được Đọc Nhiều Nhất
             </h2>
           </div>
           <MagneticButton onClick={onEnterApp}>Xem Tất Cả</MagneticButton>
         </AnimSection>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {ARTICLES.map((art, i) => (
             <AnimSection key={art.title} delay={i * 0.1}>
-              <GlassCard glowColor={`${art.color}25`} style={{ padding: '24px 28px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+              <GlassCard glowColor={`${art.color}25`} style={{ padding: '18px 24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                   <div style={{
-                    width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
+                    width: '40px', height: '40px', borderRadius: '10px', flexShrink: 0,
                     background: `${art.color}18`, border: `1px solid ${art.color}33`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     {art.type === 'VIDEO'
-                      ? <svg width="18" height="18" viewBox="0 0 24 24" fill={art.color}><polygon points="5,3 19,12 5,21" /></svg>
-                      : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={art.color} strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                      ? <svg width="16" height="16" viewBox="0 0 24 24" fill={art.color}><polygon points="5,3 19,12 5,21" /></svg>
+                      : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={art.color} strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
                     }
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h3 style={{ color: '#e2e8f0', fontWeight: '600', fontSize: '0.97rem', fontFamily: 'Inter, sans-serif', marginBottom: '6px', lineHeight: 1.4 }}>
+                    <h3 style={{ color: '#e2e8f0', fontWeight: '600', fontSize: '0.94rem', fontFamily: 'Inter, sans-serif', marginBottom: '4px', lineHeight: 1.35 }}>
                       {art.title}
                     </h3>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <span style={{ background: `${art.color}18`, color: art.color, borderRadius: '6px', padding: '2px 10px', fontSize: '0.72rem', fontWeight: '700', fontFamily: 'Inter, sans-serif' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <span style={{ background: `${art.color}18`, color: art.color, borderRadius: '6px', padding: '2px 8px', fontSize: '0.7rem', fontWeight: '700', fontFamily: 'Inter, sans-serif' }}>
                         {art.type}
                       </span>
-                      <span style={{ color: '#475569', fontSize: '0.78rem', fontFamily: 'Inter, sans-serif' }}>{art.market}</span>
-                      <span style={{ color: '#475569', fontSize: '0.78rem', fontFamily: 'Inter, sans-serif' }}>👁 {art.reads} lượt đọc</span>
+                      <span style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'Inter, sans-serif' }}>{art.market}</span>
+                      <span style={{ color: '#475569', fontSize: '0.75rem', fontFamily: 'Inter, sans-serif' }}>👁 {art.reads} lượt đọc</span>
                     </div>
                   </div>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -875,7 +829,9 @@ function FeaturedSection({ onEnterApp }) {
 
 // ─── CTA SECTION WITH DEMO SHOWCASE GRID OF UPLOADED DOCUMENTS ──────────────
 function CTASection({ onEnterApp, onOpenAuth }) {
-  const demoItems = [...INITIAL_SAMPLE_MEDIA, ...SAMPLE_VIP_MEDIA].slice(0, 6);
+  const baseDemoItems = [...INITIAL_SAMPLE_MEDIA, ...SAMPLE_VIP_MEDIA].slice(0, 6);
+  // Duplicate 3x for seamless infinite 33.333% keyframe loop
+  const demoItems = [...baseDemoItems, ...baseDemoItems, ...baseDemoItems];
 
   const handleCardClick = () => {
     if (onOpenAuth) {
@@ -886,160 +842,124 @@ function CTASection({ onEnterApp, onOpenAuth }) {
   };
 
   return (
-    <section style={{ padding: '100px 5%', position: 'relative', zIndex: 1 }}>
+    <section style={{ padding: '60px 0', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
       <AnimSection>
-        <div style={{
-          maxWidth: '1150px', margin: '0 auto', textAlign: 'center',
-          background: 'linear-gradient(135deg, rgba(14,165,233,0.06) 0%, rgba(99,102,241,0.08) 50%, rgba(139,92,246,0.06) 100%)',
-          border: '1px solid rgba(99,102,241,0.25)', borderRadius: '40px',
-          padding: '60px 4%', backdropFilter: 'blur(24px)',
-          boxShadow: '0 0 80px rgba(99,102,241,0.1)',
-          position: 'relative', overflow: 'hidden',
+        {/* INFINITE AUTO-ROTATING HORIZONTAL CAROUSEL ONLY */}
+        <div className="marquee-container" style={{
+          width: '100%',
+          overflow: 'hidden',
+          maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
         }}>
-          {/* Glow orbs inside CTA */}
-          <div style={{ position: 'absolute', top: '-80px', left: '20%', width: '250px', height: '250px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.15), transparent)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: '-80px', right: '15%', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.15), transparent)', pointerEvents: 'none' }} />
+          <div className="marquee-track">
+            {demoItems.map((item, idx) => {
+              const isPdf = item.type === 'pdf';
+              const isVid = item.type === 'video';
 
-          <div style={{ position: 'relative' }}>
-            <p style={{ color: '#6366f1', fontSize: '0.82rem', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', marginBottom: '14px' }}>
-              DEMO KHO TÀI LIỆU ĐÃ ĐĂNG TẢI
-            </p>
-            
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: '900', color: '#fff', letterSpacing: '-0.03em', fontFamily: 'Inter, sans-serif', lineHeight: 1.15, marginBottom: '16px' }}>
-              Sẵn Sàng Làm Chủ<br />
-              <GradientText gradient="linear-gradient(135deg, #0ea5e9, #6366f1, #8b5cf6)">
-                Thị Trường Tài Chính?
-              </GradientText>
-            </h2>
+              return (
+                <div
+                  key={`${item.id}-${idx}`}
+                  onClick={handleCardClick}
+                  style={{
+                    width: '320px',
+                    flexShrink: 0,
+                    background: 'rgba(11, 14, 23, 0.92)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-6px)';
+                    e.currentTarget.style.borderColor = item.isVip ? '#f59e0b' : '#38bdf8';
+                    e.currentTarget.style.boxShadow = item.isVip ? '0 12px 35px rgba(245, 158, 11, 0.25)' : '0 12px 35px rgba(56, 189, 248, 0.25)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.4)';
+                  }}
+                >
+                  {/* Thumbnail Container */}
+                  <div style={{ position: 'relative', height: '160px', overflow: 'hidden' }}>
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11, 14, 23, 0.95) 0%, transparent 60%)' }} />
 
-            <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.6, fontFamily: 'Inter, sans-serif', marginBottom: '36px', maxWidth: '620px', margin: '0 auto 36px' }}>
-              Dưới đây là danh sách các tài liệu PDF, bài giảng video và recap phân tích thị trường thực tế đã đăng tải. Đăng nhập hoặc tham gia hệ thống để xem nội dung đầy đủ!
-            </p>
+                    {/* Top Badges */}
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{
+                        background: isPdf ? 'rgba(56, 189, 248, 0.25)' : isVid ? 'rgba(168, 85, 247, 0.25)' : 'rgba(16, 185, 129, 0.25)',
+                        color: isPdf ? '#38bdf8' : isVid ? '#a855f7' : '#10b981',
+                        border: `1px solid ${isPdf ? 'rgba(56, 189, 248, 0.4)' : isVid ? 'rgba(168, 85, 247, 0.4)' : 'rgba(16, 185, 129, 0.4)'}`,
+                        fontWeight: '800',
+                        fontSize: '0.7rem',
+                        padding: '2px 8px',
+                        borderRadius: '6px'
+                      }}>
+                        {isPdf ? 'PDF EBOOK' : isVid ? 'VIDEO LESSON' : 'RECAP BIỂU ĐỒ'}
+                      </span>
 
-            {/* DEMO SHOWCASE CARDS GRID */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-              gap: '20px', 
-              marginBottom: '44px',
-              textAlign: 'left'
-            }}>
-              {demoItems.map((item) => {
-                const isPdf = item.type === 'pdf';
-                const isVid = item.type === 'video';
-
-                return (
-                  <div
-                    key={item.id}
-                    onClick={handleCardClick}
-                    style={{
-                      background: 'rgba(11, 14, 23, 0.85)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '20px',
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-6px)';
-                      e.currentTarget.style.borderColor = item.isVip ? '#f59e0b' : '#38bdf8';
-                      e.currentTarget.style.boxShadow = item.isVip ? '0 12px 35px rgba(245, 158, 11, 0.25)' : '0 12px 35px rgba(56, 189, 248, 0.25)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.4)';
-                    }}
-                  >
-                    {/* Thumbnail Container */}
-                    <div style={{ position: 'relative', height: '160px', overflow: 'hidden' }}>
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11, 14, 23, 0.95) 0%, transparent 60%)' }} />
-
-                      {/* Top Badges */}
-                      <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{
-                          background: isPdf ? 'rgba(56, 189, 248, 0.25)' : isVid ? 'rgba(168, 85, 247, 0.25)' : 'rgba(16, 185, 129, 0.25)',
-                          color: isPdf ? '#38bdf8' : isVid ? '#a855f7' : '#10b981',
-                          border: `1px solid ${isPdf ? 'rgba(56, 189, 248, 0.4)' : isVid ? 'rgba(168, 85, 247, 0.4)' : 'rgba(16, 185, 129, 0.4)'}`,
-                          fontWeight: '800',
-                          fontSize: '0.7rem',
-                          padding: '2px 8px',
-                          borderRadius: '6px'
-                        }}>
-                          {isPdf ? 'PDF EBOOK' : isVid ? 'VIDEO LESSON' : 'RECAP BIỂU ĐỒ'}
+                      {item.isVip && (
+                        <span style={{ background: '#f59e0b', color: '#000000', fontWeight: '900', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '12px' }}>
+                          VIP ONLY
                         </span>
-
-                        {item.isVip && (
-                          <span style={{ background: '#f59e0b', color: '#000000', fontWeight: '900', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '12px' }}>
-                            VIP ONLY
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Upload Date & Pages */}
-                      <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '0.73rem', color: '#CBD5E1', fontFamily: 'Inter, sans-serif' }}>
-                        <span>📅 {item.uploadDate || '2026-08-02'}</span>
-                        <span>{isPdf ? `${item.pageCount || 42} Trang` : isVid ? `${item.fileSize}` : item.market}</span>
-                      </div>
+                      )}
                     </div>
 
-                    {/* Content Details */}
-                    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                      <div>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#F8FAFC', marginBottom: '6px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                          {item.title}
-                        </h4>
-                        <p style={{ fontSize: '0.78rem', color: '#94A3B8', lineHeight: 1.4, marginBottom: '14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                          {item.description}
-                        </p>
-                      </div>
-
-                      {/* Require Login Button */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
-                        style={{
-                          width: '100%',
-                          padding: '9px',
-                          borderRadius: '100px',
-                          border: 'none',
-                          background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
-                          color: '#FFFFFF',
-                          fontWeight: '800',
-                          fontSize: '0.78rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
-                        }}
-                      >
-                        <span>🔒 Đăng Nhập / Vào Thư Viện Để Đọc</span>
-                      </button>
+                    {/* Upload Date & Pages */}
+                    <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', fontSize: '0.73rem', color: '#CBD5E1', fontFamily: 'Inter, sans-serif' }}>
+                      <span>📅 {item.uploadDate || '2026-08-02'}</span>
+                      <span>{isPdf ? `${item.pageCount || 42} Trang` : isVid ? `${item.fileSize}` : item.market}</span>
                     </div>
-
                   </div>
-                );
-              })}
-            </div>
 
-            {/* MAIN CTA CALLOUT BUTTON */}
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <MagneticButton primary onClick={handleCardClick}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-                Vào Thư Viện Đầy Đủ Ngay
-              </MagneticButton>
-            </div>
+                  {/* Content Details */}
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                    <div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#F8FAFC', marginBottom: '6px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {item.title}
+                      </h4>
+                      <p style={{ fontSize: '0.78rem', color: '#94A3B8', lineHeight: 1.4, marginBottom: '14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {item.description}
+                      </p>
+                    </div>
+
+                    {/* Require Login Button */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleCardClick(); }}
+                      style={{
+                        width: '100%',
+                        padding: '9px',
+                        borderRadius: '100px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)',
+                        color: '#FFFFFF',
+                        fontWeight: '800',
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+                      }}
+                    >
+                      <span>🔒 Đăng Nhập / Vào Thư Viện Để Đọc</span>
+                    </button>
+                  </div>
+
+                </div>
+              );
+            })}
           </div>
         </div>
       </AnimSection>
@@ -1050,11 +970,21 @@ function CTASection({ onEnterApp, onOpenAuth }) {
 // ─── FOOTER ────────────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer style={{ padding: '60px 5% 40px', position: 'relative', zIndex: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+    <footer style={{ padding: '32px 3% 24px', position: 'relative', zIndex: 1, borderTop: '1px solid rgba(255,255,255,0.06)', width: '100%' }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'linear-gradient(135deg, #0ea5e9, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontWeight: '900', fontSize: '1rem' }}>B</span>
+          <div style={{
+            width: '34px', height: '34px', borderRadius: '10px',
+            padding: '2px',
+            background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden'
+          }}>
+            <img
+              src="/logo.jpg"
+              alt="Black Sheep Library Logo"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+            />
           </div>
           <div>
             <div style={{ color: '#fff', fontWeight: '700', fontSize: '0.92rem', fontFamily: 'Inter, sans-serif' }}>Black Sheep Library</div>

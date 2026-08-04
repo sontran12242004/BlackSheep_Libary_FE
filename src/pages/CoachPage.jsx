@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
-import CoachTrackerPanel from '../components/CoachTrackerPanel';
-import CategoryFilter from '../components/CategoryFilter';
-import MediaGrid from '../components/MediaGrid';
-import PdfReaderModal from '../components/PdfReaderModal';
-import VideoCourseModal from '../components/VideoCourseModal';
-import ChartLightboxModal from '../components/ChartLightboxModal';
+import CoachTrackerPanel from '../components/coach/CoachTrackerPanel';
+import CategoryFilter from '../components/shared/CategoryFilter';
+import MediaGrid from '../components/shared/MediaGrid';
+import PdfReaderModal from '../components/modals/PdfReaderModal';
+import VideoCourseModal from '../components/modals/VideoCourseModal';
+import ChartLightboxModal from '../components/modals/ChartLightboxModal';
 import { Upload, GraduationCap, Eye, BookOpen, BarChart2 } from 'lucide-react';
-import SheepHeadIcon from '../components/SheepHeadIcon';
+import SheepHeadIcon from '../components/ui/SheepHeadIcon';
+import { useSearch } from '../hooks/useSearch';
 
 export default function CoachPage({ 
   coachItems, 
@@ -25,20 +26,7 @@ export default function CoachPage({
 }) {
   const [activeTab, setActiveTab] = useState('analytics'); // 'analytics' | 'grid'
 
-  const filteredCoachItems = coachItems.filter(item => {
-    if (activeMarket !== 'ALL' && item.market !== activeMarket) return false;
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchTitle = item.title?.toLowerCase().includes(q);
-      const matchAuthor = item.author?.toLowerCase().includes(q);
-      const matchDesc = item.description?.toLowerCase().includes(q);
-      const matchTags = item.tags?.some(t => t.toLowerCase().includes(q));
-      return matchTitle || matchAuthor || matchDesc || matchTags;
-    }
-
-    return true;
-  });
+  const filteredCoachItems = useSearch(coachItems, searchQuery, activeMarket);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

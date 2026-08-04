@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import CategoryFilter from '../components/CategoryFilter';
-import MediaGrid from '../components/MediaGrid';
-import PdfReaderModal from '../components/PdfReaderModal';
-import VideoCourseModal from '../components/VideoCourseModal';
-import ChartLightboxModal from '../components/ChartLightboxModal';
+import React from 'react';
+import CategoryFilter from '../components/shared/CategoryFilter';
+import MediaGrid from '../components/shared/MediaGrid';
+import PdfReaderModal from '../components/modals/PdfReaderModal';
+import VideoCourseModal from '../components/modals/VideoCourseModal';
+import ChartLightboxModal from '../components/modals/ChartLightboxModal';
+import { useSearch } from '../hooks/useSearch';
 
 export default function MemberPage({ 
   items, 
@@ -17,21 +18,7 @@ export default function MemberPage({
   setActiveMarket,
   onLogout 
 }) {
-  const filteredItems = (items || []).filter(item => {
-    if (!item) return false;
-    if (activeMarket && activeMarket !== 'ALL' && item.market !== activeMarket) return false;
-
-    if (searchQuery && searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchTitle = item.title?.toLowerCase().includes(q);
-      const matchAuthor = item.author?.toLowerCase().includes(q);
-      const matchDesc = item.description?.toLowerCase().includes(q);
-      const matchTags = item.tags?.some(t => t.toLowerCase().includes(q));
-      return matchTitle || matchAuthor || matchDesc || matchTags;
-    }
-
-    return true;
-  });
+  const filteredItems = useSearch(items, searchQuery, activeMarket);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
