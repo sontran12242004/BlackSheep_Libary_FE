@@ -5,13 +5,28 @@ export default function ChartLightboxModal({ item, onClose }) {
   const [zoom, setZoom] = useState(100);
   const [rotation, setRotation] = useState(0);
 
+  // Block Ctrl+S / Cmd+S / Ctrl+P to prevent downloading/saving images
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p' || e.key === 'S' || e.key === 'P')) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('⚠️ Hệ thống bảo mật Black Sheep Library: Không cho phép tải hoặc lưu hình ảnh về máy.');
+        return false;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   if (!item) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} onContextMenu={(e) => e.preventDefault()}>
       <div 
         className="modal-content" 
         onClick={(e) => e.stopPropagation()} 
+        onContextMenu={(e) => e.preventDefault()} 
         style={{ 
           maxWidth: '1100px', 
           height: '90vh', 

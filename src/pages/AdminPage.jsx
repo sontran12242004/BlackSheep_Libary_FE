@@ -10,6 +10,7 @@ export default function AdminPage({
   onOpenUpload, 
   onDeleteItem, 
   onToggleVip,
+  onToggleHide,
   selectedItem,
   setSelectedItem
 }) {
@@ -23,6 +24,7 @@ export default function AdminPage({
         onOpenUpload={onOpenUpload}
         onDeleteItem={onDeleteItem}
         onToggleVip={onToggleVip}
+        onToggleHide={onToggleHide}
       />
 
       {/* Interactive PDF Reader Modal (if previewed by Admin) */}

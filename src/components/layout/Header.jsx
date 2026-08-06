@@ -20,6 +20,7 @@ export default function Header({
   const setSearchQuery = propSetSearchQuery ?? uiContext?.setSearchQuery ?? (() => { });
   const [avatar, setAvatar] = React.useState(localStorage.getItem('bsv_user_avatar') || '/logo.jpg');
   const [selectedFrame, setSelectedFrame] = React.useState(localStorage.getItem('bsv_user_frame') || 'none');
+  const isVipMember = localStorage.getItem('bsv_is_vip') === 'true';
 
   React.useEffect(() => {
     const syncAvatar = () => {
@@ -266,6 +267,35 @@ export default function Header({
               </span>
             </div>
           </div>
+
+          {/* VIP Subscription button — ALWAYS visible on Member Page (hidden for Admin and Coach) */}
+          {currentRole === 'member' && (
+            <button
+              onClick={() => navigateTo(ROUTES.SUBSCRIPTION)}
+              title="Đến trang mua gói VIP (30.000 VND)"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                borderRadius: 'var(--radius-full)',
+                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                color: '#000000',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '0.82rem',
+                transition: 'all 0.2s ease-in-out',
+                boxShadow: '0 0 20px rgba(245, 158, 11, 0.4)',
+                animation: 'vipBtnPulse 2.5s ease-in-out infinite',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+            >
+              <span>Mua VIP</span>
+            </button>
+          )}
 
           {/* Logout Button */}
           <button

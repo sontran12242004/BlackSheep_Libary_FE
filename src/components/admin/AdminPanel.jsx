@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
-import { 
-  FileText, Video, Users, Crown, GraduationCap, Eye, UserPlus, X
-} from 'lucide-react';
-import { SAMPLE_USERS } from '../../data/sampleFinanceData';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ResourcesTab from './ResourcesTab';
 import UsersTab from './UsersTab';
 import AddUserModal from './AddUserModal';
+import { ROUTES } from '../../constants/routes';
+import { useAdminUsers } from '../../hooks/useAdminUsers';
 
 export default function AdminPanel({ 
   items = [], 
   vipItems = [], 
   onOpenUpload = () => {}, 
   onDeleteItem = () => {}, 
-  onToggleVip = () => {} 
+  onToggleVip = () => {},
+  onToggleHide = () => {}
 }) {
-  const [usersList, setUsersList] = useState(() => Array.isArray(SAMPLE_USERS) ? SAMPLE_USERS : []);
-  const [activeTab, setActiveTab] = useState('resources'); // 'resources' | 'users'
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const {
+    usersList,
+    handleRoleChange,
+    handleStatusToggle,
+    handleDeleteUser,
+    handleAddUser,
+  } = useAdminUsers();
+
+  const [activeTab, setActiveTab] = useState(() => location.pathname.endsWith('/users') ? 'users' : 'resources');
+
+  useEffect(() => {
+    if (location.pathname.endsWith('/users')) {
+      setActiveTab('users');
+    } else if (location.pathname.endsWith('/resources') || location.pathname.includes('/admin')) {
+      setActiveTab('resources');
+    }
+  }, [location.pathname]);
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    if (tabName === 'users') {
+      navigate(ROUTES.ADMIN_USERS);
+    } else {
+      navigate(ROUTES.ADMIN_RESOURCES);
+    }
+  };
   const [searchAdmin, setSearchAdmin] = useState('');
   const [searchUser, setSearchUser] = useState('');
   const [selectedAdminDoc, setSelectedAdminDoc] = useState(null);
@@ -31,27 +58,6 @@ export default function AdminPanel({
   const safeItems = (Array.isArray(items) ? items : []).filter(Boolean);
   const safeVipItems = (Array.isArray(vipItems) ? vipItems : []).filter(Boolean);
   const totalAllItems = safeItems.length + safeVipItems.length;
-
-  const handleRoleChange = (userId, newRole) => {
-    setUsersList(prev => (prev || []).map(u => u && u.id === userId ? { ...u, role: newRole } : u));
-  };
-
-  const handleStatusToggle = (userId) => {
-    setUsersList(prev => (prev || []).map(u => {
-      if (u && u.id === userId) {
-        const nextStatus = u.status === 'Hoạt động' ? 'Tạm khóa' : 'Hoạt động';
-        return { ...u, status: nextStatus };
-      }
-      return u;
-    }));
-  };
-
-  const handleDeleteUser = (userId) => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa tài khoản hội viên này khỏi hệ thống?');
-    if (confirmDelete) {
-      setUsersList(prev => (prev || []).filter(u => u && u.id !== userId));
-    }
-  };
 
   const handleAddUserSubmit = (e) => {
     e.preventDefault();
@@ -70,7 +76,7 @@ export default function AdminPanel({
       expiryDate: newUserExpiry
     };
 
-    setUsersList(prev => [newUser, ...(prev || [])]);
+    handleAddUser(newUser);
     setIsAddUserOpen(false);
 
     // Reset Form
@@ -119,7 +125,7 @@ export default function AdminPanel({
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: '700' }}>
             <span>TỔNG SÁCH &amp; PDF</span>
-            <FileText size={18} color="#38bdf8" />
+            <span style={{ color: '#38bdf8', fontSize: '1rem' }}>📄</span>
           </div>
           <div className="mono-num" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#FFFFFF', margin: '8px 0 2px' }}>
             {[...safeItems, ...safeVipItems].filter(i => i && i.type === 'pdf').length}
@@ -133,7 +139,7 @@ export default function AdminPanel({
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: '700' }}>
             <span>TỔNG VIDEO BÀI HỌC</span>
-            <Video size={18} color="#a855f7" />
+            <span style={{ color: '#a855f7', fontSize: '1rem' }}>🎬</span>
           </div>
           <div className="mono-num" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#a855f7', margin: '8px 0 2px' }}>
             {[...safeItems, ...safeVipItems].filter(i => i && i.type === 'video').length}
@@ -147,7 +153,7 @@ export default function AdminPanel({
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: '700' }}>
             <span>TỔNG MEMBER THƯỜNG</span>
-            <Users size={18} color="#FFFFFF" />
+            <span style={{ fontSize: '1rem' }}>👤</span>
           </div>
           <div className="mono-num" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#FFFFFF', margin: '8px 0 2px' }}>
             {safeUsers.filter(u => u && u.role === 'member').length}
@@ -161,7 +167,7 @@ export default function AdminPanel({
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: '700' }}>
             <span>TỔNG MEMBER VIP</span>
-            <Crown size={18} color="#f59e0b" />
+            <span style={{ color: '#f59e0b', fontSize: '1rem' }}>⭐</span>
           </div>
           <div className="mono-num" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#f59e0b', margin: '8px 0 2px' }}>
             {safeUsers.filter(u => u && u.role === 'vip').length}
@@ -175,7 +181,7 @@ export default function AdminPanel({
         <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: '700' }}>
             <span>TỔNG COACH MENTOR</span>
-            <GraduationCap size={18} color="#10b981" />
+            <span style={{ color: '#10b981', fontSize: '1rem' }}>🎓</span>
           </div>
           <div className="mono-num" style={{ fontSize: '2.2rem', fontWeight: '800', color: '#10b981', margin: '8px 0 2px' }}>
             {safeUsers.filter(u => u && u.role === 'coach').length}
@@ -190,20 +196,18 @@ export default function AdminPanel({
       {/* Admin Tab Navigation */}
       <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
         <button 
-          onClick={() => setActiveTab('resources')}
+          onClick={() => handleTabChange('resources')}
           className={`btn ${activeTab === 'resources' ? 'btn-primary' : 'btn-secondary'}`}
           style={{ borderRadius: 'var(--radius-full)', padding: '8px 18px', fontSize: '0.85rem' }}
         >
-          <FileText size={16} />
           <span>Quản Lý Kho Tài Nguyên ({totalAllItems})</span>
         </button>
 
         <button 
-          onClick={() => setActiveTab('users')}
+          onClick={() => handleTabChange('users')}
           className={`btn ${activeTab === 'users' ? 'btn-primary' : 'btn-secondary'}`}
           style={{ borderRadius: 'var(--radius-full)', padding: '8px 18px', fontSize: '0.85rem' }}
         >
-          <Users size={16} />
           <span>Quản Lý User &amp; Phân Quyền ({safeUsers.length})</span>
         </button>
       </div>
@@ -216,6 +220,7 @@ export default function AdminPanel({
           setSearchAdmin={setSearchAdmin}
           onToggleVip={onToggleVip}
           onDeleteItem={onDeleteItem}
+          onToggleHide={onToggleHide}
           setSelectedAdminDoc={setSelectedAdminDoc}
         />
       )}
@@ -255,16 +260,14 @@ export default function AdminPanel({
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '14px' }}>
               <div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Eye size={20} color="#38bdf8" /> Thống Kê Người Xem Chi Tiết
+                <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#FFFFFF' }}>
+                  Thống Kê Người Xem Chi Tiết
                 </h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   {selectedAdminDoc.title} • Đăng bởi: {selectedAdminDoc.author || 'Admin'} ({selectedAdminDoc.uploadDate || '2026-08-02'})
                 </p>
               </div>
-              <button onClick={() => setSelectedAdminDoc(null)} className="btn btn-ghost" style={{ padding: '6px' }}>
-                <X size={20} />
-              </button>
+              <button onClick={() => setSelectedAdminDoc(null)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: '0.8rem', fontWeight: '700' }}>Đóng</button>
             </div>
 
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem' }}>

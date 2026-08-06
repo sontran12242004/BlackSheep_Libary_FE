@@ -24,11 +24,32 @@ export default function AppShell() {
 
   // Derive role reactively from current route path
   const currentRole = (() => {
-    if (location.pathname.startsWith(ROUTES.ADMIN)) return ROLES.ADMIN;
-    if (location.pathname.startsWith(ROUTES.COACH)) return ROLES.COACH;
-    if (location.pathname.startsWith(ROUTES.VIP)) return ROLES.VIP;
+    if (location.pathname.startsWith('/admin')) return ROLES.ADMIN;
+    if (location.pathname.startsWith('/coach') || location.pathname === '/upload') return ROLES.COACH;
+    if (location.pathname.startsWith('/vip')) return ROLES.VIP;
     return ROLES.MEMBER;
   })();
+
+  // Synchronize /upload URL with UploadModal state
+  React.useEffect(() => {
+    if (location.pathname === ROUTES.COACH_UPLOAD) {
+      ui.openUpload();
+    }
+  }, [location.pathname]);
+
+  const handleOpenUpload = () => {
+    ui.openUpload();
+    if (currentRole === ROLES.COACH) {
+      navigate(ROUTES.COACH_UPLOAD);
+    }
+  };
+
+  const handleCloseUpload = () => {
+    ui.closeUpload();
+    if (location.pathname === ROUTES.COACH_UPLOAD) {
+      navigate(ROUTES.COACH);
+    }
+  };
 
   const handleEnterApp = () => navigate(ROUTES.MEMBER);
 
@@ -38,7 +59,7 @@ export default function AppShell() {
     ...ui,
     onSelectItem: ui.setSelectedItem,
     onEnterApp: handleEnterApp,
-    onOpenUpload: ui.openUpload,
+    onOpenUpload: handleOpenUpload,
     onDeleteItem: media.handleDeleteItem,
     onUpdateItem: media.handleUpdateItem,
     onToggleHide: media.handleToggleHide,
@@ -51,8 +72,8 @@ export default function AppShell() {
 
       {/* Global Upload Modal */}
       <UploadModal
-        isOpen={ui.isUploadOpen}
-        onClose={ui.closeUpload}
+        isOpen={ui.isUploadOpen || location.pathname === ROUTES.COACH_UPLOAD}
+        onClose={handleCloseUpload}
         onItemUploaded={media.handleItemUploaded}
       />
     </>

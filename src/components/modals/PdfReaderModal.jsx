@@ -5,6 +5,20 @@ export default function PdfReaderModal({ item, onClose }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [zoomLevel, setZoomLevel] = useState(100);
   const [activeLang, setActiveLang] = useState('vi'); // 'vi' | 'en'
+
+  // Block Ctrl+S (Save), Ctrl+P (Print), and F12/Inspect to prevent downloading PDF files
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p' || e.key === 'S' || e.key === 'P')) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('⚠️ Hệ thống bảo mật Black Sheep Library: Không cho phép tải hoặc in tài liệu về máy.');
+        return false;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
   const totalPages = item?.pageCount || 42;
 
@@ -22,10 +36,11 @@ export default function PdfReaderModal({ item, onClose }) {
   const activeDisplayTitle = activeLang === 'en' && item.titleEn ? item.titleEn : item.title;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} onContextMenu={(e) => e.preventDefault()}>
       <div 
         className="modal-content" 
         onClick={(e) => e.stopPropagation()} 
+        onContextMenu={(e) => e.preventDefault()}
         style={{ 
           maxWidth: '1100px', 
           height: '92vh', 
@@ -138,7 +153,7 @@ export default function PdfReaderModal({ item, onClose }) {
         <div style={{ flex: 1, overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px', background: '#05070A' }}>
           {activePdfUrl ? (
             <object 
-              data={`${activePdfUrl}#toolbar=0&navpanes=0&scrollbar=1&page=${currentPage}&zoom=${zoomLevel}`}
+              data={`${activePdfUrl}#toolbar=0&navpanes=0&scrollbar=1&statusbar=0&messages=0&download=0&page=${currentPage}&zoom=${zoomLevel}`}
               type="application/pdf"
               style={{
                 width: `${zoomLevel}%`,
@@ -152,7 +167,7 @@ export default function PdfReaderModal({ item, onClose }) {
               }}
             >
               <iframe 
-                src={`${activePdfUrl}#toolbar=0&navpanes=0&scrollbar=1&page=${currentPage}&zoom=${zoomLevel}`}
+                src={`${activePdfUrl}#toolbar=0&navpanes=0&scrollbar=1&statusbar=0&messages=0&download=0&page=${currentPage}&zoom=${zoomLevel}`}
                 title={activeDisplayTitle}
                 style={{
                   width: '100%',

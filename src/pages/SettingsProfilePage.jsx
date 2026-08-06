@@ -1,93 +1,60 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   User, Mail, Shield, Crown, GraduationCap, ShieldCheck, Camera,
   Bell, Moon, Globe, Lock, ChevronRight, Check, Save, ArrowLeft, Sparkles
 } from 'lucide-react';
 import SheepHeadIcon from '../components/ui/SheepHeadIcon';
 import AvatarWithFrame from '../components/ui/AvatarWithFrame';
+import { ROUTES } from '../constants/routes';
+import { AVATAR_FRAMES } from '../constants/avatarFrames';
+import { useUserProfile } from '../hooks/useUserProfile';
 
-const MOCK_PROFILE = {
-  name: 'Black Sheep Member',
-  email: 'member@blacksheep.io',
-  bio: 'Nhà giao dịch tài chính, nghiên cứu thị trường crypto & forex.',
-  joinedDate: '2026-01-15',
-  role: 'member',
-  avatar: '/logo.jpg',
-};
+export default function SettingsProfilePage({ currentRole = 'member', defaultSection }) {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const AVATAR_FRAMES = [
-  { id: 'none', name: 'Mặc Định', subtitle: 'Không dùng khung đại diện', badge: 'STANDARD' },
-  { id: 'blazing_inferno', name: 'Khung Lửa Bùng Cháy', subtitle: 'Hiệu ứng lửa bùng cháy dữ dội (Inferno)', badge: '🔥 INFERNO' },
-  { id: 'golden_bull', name: 'Bò Vàng Hoàng Kim', subtitle: 'Hào quang bứt phá đỉnh giá (Golden Bull)', badge: '👑 GOLDEN' },
-  { id: 'emerald_profit', name: 'Sóng Lợi Nhuận Emerald', subtitle: 'Sóng tăng trưởng xanh ngọc rực rỡ', badge: '💹 PROFIT' },
-  { id: 'cyber_candlestick', name: 'Nến Nhật Cyber Halo', subtitle: 'Vòng quay nến Cyber Trading Neon', badge: '⚡ NEON' },
-  { id: 'diamond_trader', name: 'Kim Cương Diamond Trader', subtitle: 'Khung lấp lánh thương gia tài chính', badge: '💎 DIAMOND' },
-  { id: 'bull_flame', name: 'Lửa Thị Trường Bull Run', subtitle: 'Hiệu ứng lửa nhiệt đới sóng đẩy Bullish', badge: '🔥 FLAME' }
-];
+  const {
+    profile,
+    setProfile,
+    selectedFrame,
+    saved,
+    handleEquipFrame,
+    handleAvatarUpload,
+    handleSaveProfile,
+  } = useUserProfile(currentRole);
 
-export default function SettingsProfilePage({ currentRole = 'member' }) {
-  const [activeSection, setActiveSection] = useState('profile');
-  const [profile, setProfile] = useState({ ...MOCK_PROFILE, role: currentRole });
-  const [selectedFrame, setSelectedFrame] = useState(localStorage.getItem('bsv_user_frame') || 'none');
-  const [saved, setSaved] = useState(false);
+  const [activeSection, setActiveSection] = useState(() => {
+    if (defaultSection) return defaultSection;
+    return location.pathname.endsWith('/frames') ? 'frames' : 'profile';
+  });
+
+  useEffect(() => {
+    if (location.pathname.endsWith('/frames')) {
+      setActiveSection('frames');
+    } else if (location.pathname.includes('/account')) {
+      setActiveSection('profile');
+    }
+  }, [location.pathname]);
+
   const [notif, setNotif] = useState({ newContent: true, recap: true, system: false });
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState('vi');
 
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    const savedAvatar = localStorage.getItem('bsv_user_avatar');
-    const savedName   = localStorage.getItem('bsv_user_name');
-    const savedBio    = localStorage.getItem('bsv_user_bio');
-    const savedFrame  = localStorage.getItem('bsv_user_frame');
-    if (savedAvatar || savedName || savedBio || savedFrame) {
-      setProfile(p => ({
-        ...p,
-        avatar: savedAvatar || p.avatar,
-        name:   savedName   || p.name,
-        bio:    savedBio    || p.bio,
-      }));
-      if (savedFrame) setSelectedFrame(savedFrame);
-    }
-  }, []);
-
-  const navigateTo = (path) => {
-    window.history.pushState({}, '', path);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
-  const handleAvatarUpload = (e) => {
+  const onFileInputChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      alert('Vui lòng chọn một tệp hình ảnh (.png, .jpg, .jpeg, .webp)');
-      return;
+    if (file) handleAvatarUpload(file);
+  };
+
+  const handleSectionClick = (sectionId) => {
+    setActiveSection(sectionId);
+    if (sectionId === 'frames') {
+      navigate(ROUTES.SETTINGS_FRAMES);
+    } else {
+      navigate(ROUTES.SETTINGS);
     }
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const dataUrl = evt.target.result;
-      setProfile(p => ({ ...p, avatar: dataUrl }));
-      localStorage.setItem('bsv_user_avatar', dataUrl);
-      window.dispatchEvent(new Event('avatar_updated'));
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleEquipFrame = (frameId) => {
-    setSelectedFrame(frameId);
-    localStorage.setItem('bsv_user_frame', frameId);
-    window.dispatchEvent(new Event('avatar_updated'));
-  };
-
-  const handleSave = () => {
-    localStorage.setItem('bsv_user_avatar', profile.avatar);
-    localStorage.setItem('bsv_user_name', profile.name);
-    localStorage.setItem('bsv_user_bio', profile.bio);
-    localStorage.setItem('bsv_user_frame', selectedFrame);
-    window.dispatchEvent(new Event('avatar_updated'));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
   };
 
   const roleColor = currentRole === 'vip' ? '#f59e0b' : currentRole === 'coach' ? '#10b981' : currentRole === 'admin' ? '#38bdf8' : '#FFFFFF';
@@ -116,7 +83,7 @@ export default function SettingsProfilePage({ currentRole = 'member' }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <button
-          onClick={() => navigateTo('/member')}
+          onClick={() => navigateTo(ROUTES.MEMBER)}
           className="btn btn-secondary"
           style={{ borderRadius: 'var(--radius-full)', padding: '8px 16px', fontSize: '0.83rem', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
@@ -170,7 +137,7 @@ export default function SettingsProfilePage({ currentRole = 'member' }) {
           {SECTIONS.map(s => (
             <button
               key={s.id}
-              onClick={() => setActiveSection(s.id)}
+              onClick={() => handleSectionClick(s.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '12px',
                 padding: '12px 16px', borderRadius: '12px', border: 'none',
@@ -241,7 +208,7 @@ export default function SettingsProfilePage({ currentRole = 'member' }) {
                 </span>
 
                 <button
-                  onClick={handleSave}
+                  onClick={handleSaveProfile}
                   className="btn btn-primary"
                   style={{
                     display: 'flex', alignItems: 'center', gap: '8px',
@@ -256,87 +223,148 @@ export default function SettingsProfilePage({ currentRole = 'member' }) {
             </div>
           )}
 
-          {activeSection === 'frames' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#fff' }}>
-                  Bộ Sưu Tập Khung Đại Diện Tài Chính
-                </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Chọn khung hiệu ứng Animation chủ đề Trading & Tài Chính để trang trí ảnh đại diện của bạn trên toàn hệ thống.
-                </p>
-              </div>
+          {activeSection === 'frames' && (() => {
+            const canUseFrames = ['vip', 'coach', 'admin'].includes(currentRole);
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#fff' }}>
+                    Bộ Sưu Tập Khung Đại Diện Tài Chính
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Chọn khung hiệu ứng Animation chủ đề Trading &amp; Tài Chính để trang trí ảnh đại diện của bạn trên toàn hệ thống.
+                  </p>
+                </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
-                {AVATAR_FRAMES.map((f) => {
-                  const isSelected = selectedFrame === f.id;
-                  return (
-                    <div
-                      key={f.id}
-                      onClick={() => handleEquipFrame(f.id)}
-                      style={{
-                        background: isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.03)',
-                        border: isSelected ? '2px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '16px',
-                        padding: '20px 16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        position: 'relative',
-                        cursor: 'pointer',
-                        transition: 'all 0.25 ease',
-                        boxShadow: isSelected ? '0 8px 25px rgba(245, 158, 11, 0.25)' : 'none'
-                      }}
-                    >
-                      <div style={{ margin: '14px 0 10px 0' }}>
-                        <AvatarWithFrame
-                          avatarUrl={profile.avatar}
-                          frameId={f.id}
-                          size={76}
-                          roleColor="rgba(255,255,255,0.3)"
-                          onClick={() => handleEquipFrame(f.id)}
-                        />
-                      </div>
-
-                      <h4 style={{ fontSize: '0.92rem', fontWeight: '700', color: '#F8FAFC', marginBottom: '14px' }}>
-                        {f.name}
-                      </h4>
-
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleEquipFrame(f.id); }}
-                        style={{
-                          width: '100%',
-                          padding: '8px',
-                          borderRadius: '100px',
-                          border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.15)',
-                          background: isSelected ? '#f59e0b' : 'rgba(255,255,255,0.05)',
-                          color: isSelected ? '#000' : '#CBD5E1',
-                          fontWeight: '700',
-                          fontSize: '0.78rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        {isSelected ? (
-                          <>
-                            <Check size={14} color="#000" /> Đang Sử Dụng
-                          </>
-                        ) : (
-                          'Trang Bị Khung'
-                        )}
-                      </button>
-
+                {/* Lock overlay for regular members */}
+                {!canUseFrames ? (
+                  <div style={{ position: 'relative', borderRadius: '20px', overflow: 'hidden' }}>
+                    {/* Blurred preview of frames underneath */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                      gap: '16px',
+                      filter: 'blur(4px)',
+                      opacity: 0.35,
+                      pointerEvents: 'none',
+                      userSelect: 'none',
+                    }}>
+                      {AVATAR_FRAMES.map((f) => (
+                        <div key={f.id} style={{
+                          background: 'rgba(255,255,255,0.03)',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          borderRadius: '16px', padding: '20px 16px',
+                          display: 'flex', flexDirection: 'column', alignItems: 'center',
+                        }}>
+                          <AvatarWithFrame avatarUrl={profile.avatar} frameId={f.id} size={76} roleColor="rgba(255,255,255,0.3)" />
+                          <h4 style={{ fontSize: '0.92rem', fontWeight: '700', color: '#F8FAFC', marginTop: '10px', marginBottom: '14px' }}>{f.name}</h4>
+                          <div style={{ width: '100%', height: '32px', borderRadius: '100px', background: 'rgba(255,255,255,0.05)' }} />
+                        </div>
+                      ))}
                     </div>
-                  );
-                })}
+
+                    {/* Lock glass overlay */}
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: 'rgba(5, 5, 7, 0.75)',
+                      backdropFilter: 'blur(2px)',
+                      borderRadius: '20px',
+                      border: '1px solid rgba(245, 158, 11, 0.25)',
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', justifyContent: 'center',
+                      gap: '16px', padding: '40px',
+                      animation: 'fadeIn 0.3s ease',
+                    }}>
+                      <div style={{
+                        width: '72px', height: '72px', borderRadius: '20px',
+                        background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(168,85,247,0.12))',
+                        border: '1px solid rgba(245,158,11,0.4)',
+                        boxShadow: '0 0 40px rgba(245,158,11,0.2)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Lock size={32} color="#f59e0b" />
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: '900', color: '#FFFFFF', marginBottom: '8px' }}>
+                          🔒 Tính Năng VIP
+                        </h4>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '340px' }}>
+                          Bộ Sưu Tập Khung Đại Diện Tài Chính chỉ dành cho <strong style={{ color: '#f59e0b' }}>VIP Member</strong>, <strong style={{ color: '#10b981' }}>Coach</strong> và <strong style={{ color: '#38bdf8' }}>Admin</strong>.
+                          <br />Nâng cấp VIP để mở khóa toàn bộ khung đặc biệt!
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => navigateTo(ROUTES.SUBSCRIPTION)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px',
+                          padding: '12px 28px', borderRadius: 'var(--radius-full)',
+                          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                          color: '#000', border: 'none', cursor: 'pointer',
+                          fontWeight: '800', fontSize: '0.9rem',
+                          boxShadow: '0 0 24px rgba(245,158,11,0.4)',
+                          animation: 'vipBtnPulse 2.5s ease-in-out infinite',
+                          transition: 'transform 0.2s ease',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                      >
+                        <Crown size={16} />
+                        Mua VIP Ngay — 30.000 VND
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
+                    {AVATAR_FRAMES.map((f) => {
+                      const isSelected = selectedFrame === f.id;
+                      return (
+                        <div
+                          key={f.id}
+                          onClick={() => handleEquipFrame(f.id)}
+                          style={{
+                            background: isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                            border: isSelected ? '2px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '16px', padding: '20px 16px',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center',
+                            textAlign: 'center', position: 'relative', cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            boxShadow: isSelected ? '0 8px 25px rgba(245, 158, 11, 0.25)' : 'none'
+                          }}
+                        >
+                          <div style={{ margin: '14px 0 10px 0' }}>
+                            <AvatarWithFrame
+                              avatarUrl={profile.avatar}
+                              frameId={f.id}
+                              size={76}
+                              roleColor="rgba(255,255,255,0.3)"
+                              onClick={() => handleEquipFrame(f.id)}
+                            />
+                          </div>
+                          <h4 style={{ fontSize: '0.92rem', fontWeight: '700', color: '#F8FAFC', marginBottom: '14px' }}>
+                            {f.name}
+                          </h4>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleEquipFrame(f.id); }}
+                            style={{
+                              width: '100%', padding: '8px', borderRadius: '100px',
+                              border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                              background: isSelected ? '#f59e0b' : 'rgba(255,255,255,0.05)',
+                              color: isSelected ? '#000' : '#CBD5E1',
+                              fontWeight: '700', fontSize: '0.78rem', cursor: 'pointer',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              gap: '6px', transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {isSelected ? (<><Check size={14} color="#000" /> Đang Sử Dụng</>) : 'Trang Bị Khung'}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {activeSection === 'notifications' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

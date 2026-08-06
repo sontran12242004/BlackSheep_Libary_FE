@@ -3,12 +3,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 
 // Pages
-import LandingPage   from './pages/LandingPage';
-import MemberPage    from './pages/MemberPage';
-import VipPage       from './pages/VipPage';
-import CoachPage     from './pages/CoachPage';
-import AdminPage     from './pages/AdminPage';
+import LandingPage from './pages/LandingPage';
+import MemberPage from './pages/MemberPage';
+import VipPage from './pages/VipPage';
+import CoachPage from './pages/CoachPage';
+import AdminPage from './pages/AdminPage';
 import SettingsProfilePage from './pages/SettingsProfilePage';
+import SubscriptionPage from './pages/SubscriptionPage';
 
 // Layout
 import Layout from './components/layout/Layout';
@@ -30,7 +31,7 @@ export default function AppRouter({ appProps }) {
           path={ROUTES.MEMBER}
           element={
             <MemberPage
-              items={appProps.allItems}
+              items={(appProps.allItems || []).filter(i => !i.isHidden)}
               userRole={appProps.currentRole}
               onSelectItem={appProps.onSelectItem}
               selectedItem={appProps.selectedItem}
@@ -46,7 +47,7 @@ export default function AppRouter({ appProps }) {
           path={ROUTES.VIP}
           element={
             <VipPage
-              vipItems={appProps.allItems}
+              vipItems={(appProps.allItems || []).filter(i => !i.isHidden)}
               onSelectItem={appProps.onSelectItem}
               selectedItem={appProps.selectedItem}
               setSelectedItem={appProps.setSelectedItem}
@@ -77,6 +78,25 @@ export default function AppRouter({ appProps }) {
           }
         />
         <Route
+          path={ROUTES.COACH_UPLOAD}
+          element={
+            <CoachPage
+              coachItems={appProps.allItems}
+              onSelectItem={appProps.onSelectItem}
+              selectedItem={appProps.selectedItem}
+              setSelectedItem={appProps.setSelectedItem}
+              searchQuery={appProps.searchQuery}
+              setSearchQuery={appProps.setSearchQuery}
+              activeMarket={appProps.activeMarket}
+              setActiveMarket={appProps.setActiveMarket}
+              onOpenUpload={appProps.onOpenUpload}
+              onDeleteItem={appProps.onDeleteItem}
+              onUpdateItem={appProps.onUpdateItem}
+              onToggleHide={appProps.onToggleHide}
+            />
+          }
+        />
+        <Route
           path={ROUTES.ADMIN}
           element={
             <AdminPage
@@ -85,6 +105,37 @@ export default function AppRouter({ appProps }) {
               onOpenUpload={appProps.onOpenUpload}
               onDeleteItem={appProps.onDeleteItem}
               onToggleVip={appProps.onToggleVip}
+              onToggleHide={appProps.onToggleHide}
+              selectedItem={appProps.selectedItem}
+              setSelectedItem={appProps.setSelectedItem}
+            />
+          }
+        />
+        <Route
+          path={ROUTES.ADMIN_RESOURCES}
+          element={
+            <AdminPage
+              items={appProps.items}
+              vipItems={appProps.vipItems}
+              onOpenUpload={appProps.onOpenUpload}
+              onDeleteItem={appProps.onDeleteItem}
+              onToggleVip={appProps.onToggleVip}
+              onToggleHide={appProps.onToggleHide}
+              selectedItem={appProps.selectedItem}
+              setSelectedItem={appProps.setSelectedItem}
+            />
+          }
+        />
+        <Route
+          path={ROUTES.ADMIN_USERS}
+          element={
+            <AdminPage
+              items={appProps.items}
+              vipItems={appProps.vipItems}
+              onOpenUpload={appProps.onOpenUpload}
+              onDeleteItem={appProps.onDeleteItem}
+              onToggleVip={appProps.onToggleVip}
+              onToggleHide={appProps.onToggleHide}
               selectedItem={appProps.selectedItem}
               setSelectedItem={appProps.setSelectedItem}
             />
@@ -93,6 +144,14 @@ export default function AppRouter({ appProps }) {
         <Route
           path={ROUTES.SETTINGS}
           element={<SettingsProfilePage currentRole={appProps.currentRole} />}
+        />
+        <Route
+          path={ROUTES.SETTINGS_FRAMES}
+          element={<SettingsProfilePage currentRole={appProps.currentRole} defaultSection="frames" />}
+        />
+        <Route
+          path={ROUTES.SUBSCRIPTION}
+          element={<SubscriptionPage />}
         />
       </Route>
 
